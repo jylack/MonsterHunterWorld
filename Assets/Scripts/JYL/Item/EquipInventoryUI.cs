@@ -1,53 +1,48 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-//장비 인벤토리 UI
-public class EquipInventoryUI : BaseInventory, IClosableUI
+public class EquipInventoryUI : BaseInventory
 {
-    [SerializeField] GameObject slotParent;
-
-    public bool IsOpen => gameObject.activeSelf;
+    [SerializeField] private ItemType filterType = ItemType.All;
 
     private void Start()
     {
         invenType = InvenType.EquipBox;
 
-        SlotSetting(slotParent, invenType);
-
+        SlotSetting(slotParent);
         InvenInit();
 
-        GetItemToInventory(ItemDataBase.Instance.GetItem(ItemImageNumber.HunterKnife));
-        GetItemToInventory(ItemDataBase.Instance.GetItem(ItemImageNumber.HunterArmor));
+        // 예시로 아이템 추가
+        TryAddItem(1001); // 헌터 나이프
+        TryAddItem(2001); // 헌터 헬름
+        TryAddItem(2002); // 헌터 체스트
+        TryAddItem(3001); // 본 헬름
 
-        //가지고있는 아이템이 있는경우
-        if (items.Count > 0)
-        {
-            for (int i = 0; i < items.Count; i++)
-            {
-                slot[i].GetComponent<ItemSlot>().SlotSetItem(items[i]);
-            }
-        }
+        RefreshUI();
     }
 
     private void OnEnable()
     {
-        StartCoroutine(DelayedRefresh());
+        RefreshUI();
     }
 
-    IEnumerator DelayedRefresh()
+    public void SetFilter(ItemType type)
     {
-        yield return new WaitForSeconds(0.1f);
-        RefreshUI(); UIManager.Instance.RegisterUI(this);
+        filterType = type;
+        RefreshUI();
     }
 
-    public void CloseUI()
+    public override void RefreshUI()
     {
-        gameObject.SetActive(false);
-    }
-    private void OnDisable()
-    {
-        UIManager.Instance.UnregisterUI(this);
+        for (int i = 0; i < slotObjs.Count; i++)
+        {
+            int id = (i < itemIDs.Count) ? itemIDs[i] : 0;
+            var item = ItemManager.Instance.GetItem(id);
+
+            bool isValid = item != null && 
+                           item.type != ItemType.Empty &&
+                           (filterType == ItemType.All || item.type == filterType);
+
+            slotObjs[i].GetComponent<ItemSlot>().SetItem(isValid ? id : 0);
+        }
     }
 }

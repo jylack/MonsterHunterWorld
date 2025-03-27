@@ -8,38 +8,30 @@ public enum InvenType
     EquipBox
 }
 
-//플레이어의 모든 인벤토리
 public class InvenToryCtrl : MonoBehaviour
 {
-    //현재 장착한 장비 인벤토리
-    [SerializeField] EquippedInventoryUI equippedInventoryUI;
-    public EquippedInventoryUI EquippedInventoryUI => equippedInventoryUI;
-
-    //현재 흭득한 장비 인벤토리
-    [SerializeField] EquipInventoryUI equipInventoryUI;
-    public EquipInventoryUI EquipInventoryUI => equipInventoryUI;
-    
-    //장비용 툴팁 UI
-    [SerializeField] EquipItemToolTipCtrl equipItemToolTipCtrl;
-    public EquipItemToolTipCtrl EquipItemToolTipCtrl => equipItemToolTipCtrl;
-
-    //현재 가지고있을 인벤토리
-    [SerializeField] InventoryItems inventoryItems;
-    public InventoryItems InventoryItems => inventoryItems;
-    //사물함 인벤토리
-    [SerializeField] BoxInvenTory boxInvenTory;
-    public BoxInvenTory BoxInvenTory => boxInvenTory;
-
-    //인벤용 툴팁 UI
-    [SerializeField] ItemToolTipCtrl itemToolTipCtrl;
-    public ItemToolTipCtrl ItemToolTipCtrl => itemToolTipCtrl;
-
-
     public static InvenToryCtrl Instance;
+
+    [Header("인벤토리들")]
+    [SerializeField] EquippedInventoryUI equippedInventoryUI;
+    [SerializeField] EquipInventoryUI equipInventoryUI;
+    [SerializeField] InventoryItems inventoryItems;
+    [SerializeField] BoxInvenTory boxInvenTory;
+
+    [Header("툴팁")]
+    [SerializeField] ItemToolTipCtrl itemToolTipCtrl;
+    [SerializeField] EquipItemToolTipCtrl equipItemToolTipCtrl;
+
+    public EquippedInventoryUI EquippedInventoryUI => equippedInventoryUI;
+    public EquipInventoryUI EquipInventoryUI => equipInventoryUI;
+    public InventoryItems InventoryItems => inventoryItems;
+    public BoxInvenTory BoxInvenTory => boxInvenTory;
+    public ItemToolTipCtrl ItemToolTipCtrl => itemToolTipCtrl;
+    public EquipItemToolTipCtrl EquipItemToolTipCtrl => equipItemToolTipCtrl;
 
     private void Awake()
     {
-        if (Instance != null )
+        if (Instance != null)
         {
             Destroy(gameObject);
             return;
@@ -47,9 +39,8 @@ public class InvenToryCtrl : MonoBehaviour
         Instance = this;
     }
 
-
-    //소지 인벤토리와 창고 인벤토리 전용
-    public void ChangeItemByKey(InvenType fromType, ItemImageNumber itemKey)
+    // 인벤 ↔ 박스 아이템 이동
+    public void ChangeItemByKey(InvenType fromType, int itemID)
     {
         if (fromType == InvenType.Equipped || fromType == InvenType.EquipBox)
         {
@@ -60,22 +51,18 @@ public class InvenToryCtrl : MonoBehaviour
         BaseInventory from = (fromType == InvenType.Inven) ? inventoryItems : boxInvenTory;
         BaseInventory to = (fromType == InvenType.Inven) ? boxInvenTory : inventoryItems;
 
-        //BaseItem original = ItemDataBase.Instance.itemDB[itemKey];
-        //위 코드에서 클론 매서드(주소형에서 값형으로 변환후 반환) 만들어둔거 사용해서 바꿈
-        BaseItem original = ItemDataBase.Instance.GetItem(itemKey);
-
-        int fromIndex = from.Items.FindIndex(i => i.key == original.key);
-
-        if (fromIndex >= 0)
+        int fromIndex = from.ItemIDs.FindIndex(id => id == itemID);
+        if (fromIndex < 0)
         {
-            from.Items[fromIndex].count--;
-            if (from.Items[fromIndex].count <= 0)
-            {
-                from.Items[fromIndex] = ItemDataBase.Instance.emptyItem;
-            }
+            Debug.LogWarning($"[ChangeItemByKey] from 인벤토리에 ID {itemID} 없음");
+            return;
         }
 
-        to.ChangeItem(to.Items, itemKey);
+        // from에서 제거
+        from.ItemIDs[fromIndex] = 0;
+
+        // to에 추가 시도
+        to.ChangeItem(to.ItemIDs, itemID);
 
         inventoryItems.CompactItemList();
         boxInvenTory.CompactItemList();
@@ -85,55 +72,39 @@ public class InvenToryCtrl : MonoBehaviour
     }
 
 
-    //장비 인벤토리에서 장비 장착 하기
-    public void EquipItem(ItemImageNumber itemKey)
+    // 특정 장비 부위에 아이템 장착
+    public void EquipItemToSlot(EquipSlot slot, int itemID)
     {
-        BaseItem item = ItemDataBase.Instance.GetItem(itemKey);
-
-        if (item.type != ItemType.Weapon &&
-            item.type != ItemType.Armor)
+        BaseItem item = ItemDataBase.Instance.GetItem(itemID);
+        if (item == null || item.GetEquipSlot() != slot)
         {
-            Debug.LogError("장비 아이템이 아닙니다.");
-            return;
-        }
-        if (equippedInventoryUI.Items.FindIndex(i => i.name == item.name) >= 0)
-        {
-            Debug.LogError("이미 장착한 아이템입니다.");
+            Debug.LogWarning("장착 불가능한 슬롯입니다.");
             return;
         }
 
-        equippedInventoryUI.ChangeItem(equippedInventoryUI.Items, itemKey);
         equippedInventoryUI.EquipItem(item);
+        equipInventoryUI.RemoveItem(itemID);
 
-        equipInventoryUI.ChangeItem(equipInventoryUI.Items, itemKey);
         equippedInventoryUI.RefreshUI();
         equipInventoryUI.RefreshUI();
     }
 
-    //장비 인벤토리에서 장비 해제 하기
-    public void UnEquipItem(ItemImageNumber itemKey)
+    // 장착 해제 → 장비 인벤토리에 반환
+    public void UnEquipItemFromSlot(EquipSlot slot)
     {
-        BaseItem item = ItemDataBase.Instance.GetItem(itemKey);
-
-        
-        if (item.type != ItemType.Weapon && item.type != ItemType.Armor)
+        int itemID = equippedInventoryUI.GetEquippedItemID(slot);
+        if (itemID <= 0)
         {
-            Debug.LogError("장비 아이템이 아닙니다.");
-            return;
-        }
-        if (equippedInventoryUI.Items.FindIndex(i => i.name == item.name) < 0)
-        {
-            Debug.LogError("장착한 아이템이 아닙니다.");
+            Debug.LogWarning("해당 부위에 장착된 아이템이 없음.");
             return;
         }
 
-        equippedInventoryUI.ChangeItem(equippedInventoryUI.Items, itemKey);
-        equipInventoryUI.ChangeItem(equipInventoryUI.Items, itemKey);
+        equippedInventoryUI.UnequipItem(slot);
+        equipInventoryUI.TryAddItem(itemID);
+
         equippedInventoryUI.RefreshUI();
         equipInventoryUI.RefreshUI();
     }
 
-
-
-
+    public bool IsEquipSelectOpen => equipInventoryUI.gameObject.activeSelf;
 }

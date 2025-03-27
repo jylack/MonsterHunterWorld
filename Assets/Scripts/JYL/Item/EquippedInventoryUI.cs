@@ -1,68 +1,60 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-//장착중 인벤 UI
-public class EquippedInventoryUI : BaseInventory, IClosableUI
+public class EquippedInventoryUI : BaseInventory
 {
-    public GameObject[] equipSlot;
-    public bool IsOpen => gameObject.activeSelf;
+    [SerializeField] GameObject slotParent;
+
+    private List<EquipSlotCtrl> slotUIs = new List<EquipSlotCtrl>();
 
     private void Start()
     {
         invenType = InvenType.Equipped;
 
-        SlotSetting(gameObject, invenType);
-        InvenInit();
-    }
-    public void EquipItem(BaseItem value)
-    {
-        var index = (int)value.GetEquipSlot();
+        // 슬롯 설정: 자식 오브젝트 기준
+        var slots = slotParent.GetComponentsInChildren<EquipSlotCtrl>();
+        slotUIs.AddRange(slots);
 
-        if (index < 0 || index >= equipSlot.Length || value.name == "")
+        // 슬롯 초기화: 개수는 EquipSlot.end 기준
+        itemIDs = new List<int>();
+        for (int i = 0; i < (int)EquipSlot.end; i++)
         {
-            Debug.Log("값이 잘못됬습니다.");
-            return;
+            itemIDs.Add(0); // 0은 빈 슬롯
         }
 
-        equipSlot[index].GetComponent<EquipslotCtrl>().SlotListSetting(value);
-        
-
-        //items[index] = value;
-    }
-
-
-    public void CloseUI()
-    {
-        gameObject.SetActive(false);
-    }
-
-    private void OnEnable()
-    {
         RefreshUI();
-        //UIManager.Instance.RegisterUI(this);
     }
 
-    private void OnDisable()
+    // 장비 장착 - 장착한 아이템은 정보가 필요하므로 세팅
+    public void EquipItem(BaseItem item)
     {
-        //UIManager.Instance.UnregisterUI(this);
+        EquipSlot? slot = item.GetEquipSlot();
+        if (slot == null) return;
+
+        int index = (int)slot.Value;
+        itemIDs[index] = item.id;
     }
 
-    //public void RefreshUI()
-    //{
-    //    for (int i = 0; i < equipSlot.Length; i++)
-    //    {
-    //        var slotComp = equipSlot[i].GetComponent<ItemSlot>();
-    //        if (slotComp == null)
-    //        {
-    //            Debug.LogWarning($"슬롯 {i}번에 ItemSlot 컴포넌트가 없습니다.");
-    //            continue;
-    //        }
-    //        if (items[i] != null)
-    //        {
-    //            slotComp.SlotSetItem(items[i]);
-    //        }
-    //    }
-    //}
+    // 장비 해제
+    public void UnequipItem(EquipSlot slot)
+    {
+        int index = (int)slot;
+        itemIDs[index] = 0;
+    }
 
+    // 슬롯별 아이템 ID 확인
+    public int GetEquippedItemID(EquipSlot slot)
+    {
+        return itemIDs[(int)slot];
+    }
+
+    public override void RefreshUI()
+    {
+        for (int i = 0; i < itemIDs.Count && i < slotUIs.Count; i++)
+        {
+            int id = itemIDs[i];
+            BaseItem item = (id > 0) ? ItemDataBase.Instance.GetItem(id) : ItemDataBase.Instance.emptyItem;
+            slotUIs[i].SlotListSetting(item);
+        }
+    }
 }

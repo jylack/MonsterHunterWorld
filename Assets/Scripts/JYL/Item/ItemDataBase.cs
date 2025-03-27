@@ -3,8 +3,36 @@ using UnityEngine;
 
 public enum ItemImageNumber
 {
-   weapon,Head, Chest, Arms, Waist, Legs, band, neck, Potion, Meat, Trap, Empty
+    OneHandSword,
+    Head,
+    Chest,
+    Arms,
+    Waist,
+    Legs,
+    band,
+    neck,
+    Potion,
+    Meat,
+    Trap,
+    Empty
 }
+
+public enum ItemIndexNumber
+{
+    OneHandSword = 0,
+    Head = 1000,
+    Chest = 2000,
+    Arms = 3000,
+    Waist = 4000,
+    Legs = 5000,
+    band = 6000,
+    neck = 7000,
+    Potion = 8000,
+    Meat = 8100,
+    Trap = 8200,
+    End
+}
+//color = new Color32(170, 239, 255, 255) //·¹¾î 8»ö»ó
 
 public class ItemDataBase : MonoBehaviour
 {
@@ -15,7 +43,7 @@ public class ItemDataBase : MonoBehaviour
     List<GameObject> trapItemObj = new List<GameObject>();
 
     public List<BaseItem> items = new List<BaseItem>();
-    public Dictionary<ItemImageNumber, BaseItem> itemDB = new Dictionary<ItemImageNumber, BaseItem>();
+    public Dictionary<int, BaseItem> itemDB = new Dictionary<int, BaseItem>();
 
 
     public BaseItem emptyItem;
@@ -39,7 +67,7 @@ public class ItemDataBase : MonoBehaviour
         emptyItem = new BaseItem
         {
             image = itemImages[(int)ItemImageNumber.Empty],
-            key = ItemImageNumber.Empty,
+            id = 0,
             name = "",
             type = ItemType.Empty,
             rarity = "  ",
@@ -50,22 +78,15 @@ public class ItemDataBase : MonoBehaviour
             price = 0
         };
 
-        //Debug.Log(emptyItem.name);
-        //Debug.Log(emptyItem.image.name);
-        //Debug.Log(emptyItem.color);
-
-
-        itemDB.Add(ItemImageNumber.Empty, emptyItem);
-
+        itemDB.Add(0, emptyItem);
 
         //¾ÆÀÌÅÛ µðÆúÆ® µ¥ÀÌÅÍ »ý¼º
-
         items.Add(new Weapon
         {
-            image = itemImages[(int)ItemImageNumber.HunterKnife],
-            key = ItemImageNumber.HunterKnife,
+            image = itemImages[(int)ItemImageNumber.OneHandSword],
+            id = 18,
             name = "ÇåÅÍ ³ªÀÌÇÁ I",
-            type = ItemType.Weapon,
+            type = ItemType.Weapon,            
             rarity = "Èñ±Íµµ 1",
             count = 1,
             maxCount = 1,
@@ -76,24 +97,25 @@ public class ItemDataBase : MonoBehaviour
             price = 150
         });
 
-        items.Add(new Armor
+        items.Add(new Armor 
         {
-            image = itemImages[(int)ItemImageNumber.HunterArmor],
-            key = ItemImageNumber.HunterArmor,
+            image = itemImages[(int)ItemImageNumber.Head],
+            id = 1001,
             name = "·¹´õ Çìµå",
             type = ItemType.Armor,
-            equipType = EquipSlot.Chest,
+            equipType = EquipSlot.Head,
             level = 1,
-            rarity = "Èñ±Íµµ 8",
+            rarity = "Èñ±Íµµ 1",
             count = 1,
             maxCount = 1,
-            defense = 82,
+            defense = 1,
             fireDef = 1,
             waterDef = 1,
             LightningDef = 1,
             IceDef = 1,
             DragonDef = 1,
-            color = new Color32(170, 239, 255, 255),
+            color = new Color32(255, 255,255, 255),
+            
             tooltip = "½Ç¿ëÀûÀ¸·Î ¸¸µé¾îÁ® ÀÎ±â°¡ ¸¹Àº ÇåÅÍ¿ë ¸öÅë ¹æ¾î±¸. ¿ª½Ã ÃÖ»ó±Þ ¸ðµ¨Àº ´Ù¸£´Ù.",
             price = 150
         });
@@ -101,8 +123,8 @@ public class ItemDataBase : MonoBehaviour
 
         items.Add(new Potion
         {
-            image = itemImages[(int)ItemImageNumber.RecoveryPotion],
-            key = ItemImageNumber.RecoveryPotion,
+            image = itemImages[(int)ItemImageNumber.Potion],
+            id = 8001,
             name = "È¸º¹¾à",
             type = ItemType.Potion,
             rarity = "Èñ±Íµµ 1",
@@ -116,8 +138,8 @@ public class ItemDataBase : MonoBehaviour
 
         items.Add(new Potion
         {
-            image = itemImages[(int)ItemImageNumber.WellCookedMeat],
-            key = ItemImageNumber.WellCookedMeat,
+            image = itemImages[(int)ItemImageNumber.Meat],
+            id = 8101,
             name = "Àß ÀÍÀº °í±â",
             type = ItemType.Potion,
             rarity = "Èñ±Íµµ 1",
@@ -131,8 +153,8 @@ public class ItemDataBase : MonoBehaviour
 
         items.Add(new Trap
         {
-            image = itemImages[(int)ItemImageNumber.VineTrap],
-            key = ItemImageNumber.VineTrap,
+            image = itemImages[(int)ItemImageNumber.Trap],
+            id = 8201,
             name = "±¸¸Û ÇÔÁ¤",
             type = ItemType.Trap,
             rarity = "Èñ±Íµµ 3",
@@ -145,11 +167,11 @@ public class ItemDataBase : MonoBehaviour
             price = 150
         });
 
-        itemDB.Add(ItemImageNumber.HunterKnife, items[(int)ItemImageNumber.HunterKnife]);
-        itemDB.Add(ItemImageNumber.HunterArmor, items[(int)ItemImageNumber.HunterArmor]);
-        itemDB.Add(ItemImageNumber.RecoveryPotion, items[(int)ItemImageNumber.RecoveryPotion]);
-        itemDB.Add(ItemImageNumber.WellCookedMeat, items[(int)ItemImageNumber.WellCookedMeat]);
-        itemDB.Add(ItemImageNumber.VineTrap, items[(int)ItemImageNumber.VineTrap]);
+        //itemDB.Add(ItemImageNumber.HunterKnife, items[(int)ItemImageNumber.HunterKnife]);
+        //itemDB.Add(ItemImageNumber.HunterArmor, items[(int)ItemImageNumber.HunterArmor]);
+        //itemDB.Add(ItemImageNumber.RecoveryPotion, items[(int)ItemImageNumber.RecoveryPotion]);
+        //itemDB.Add(ItemImageNumber.WellCookedMeat, items[(int)ItemImageNumber.WellCookedMeat]);
+        //itemDB.Add(ItemImageNumber.VineTrap, items[(int)ItemImageNumber.VineTrap]);
 
 
         if (items.Count > 0)
@@ -161,21 +183,9 @@ public class ItemDataBase : MonoBehaviour
         //Debug.Log(item.name);
     }
 
-    public BaseItem GetItem(int index)
-    {
-        return items[index].Clone();
-    }
-
-    public BaseItem GetItem(string name)
-    {
-        foreach (BaseItem item in items)
-        {
-            if (item.name == name)
-            {
-                return item.Clone();
-            }
-        }
-        return null;
+    public BaseItem GetItem(int id)
+    {        
+        return itemDB[id].Clone();
     }
 
     public BaseItem GetItem(ItemImageNumber itemImageNumber)

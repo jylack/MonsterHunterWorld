@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum ItemType
@@ -44,7 +45,7 @@ public enum TrapType
 public class BaseItem
 {
     public Sprite image;
-    public ItemImageNumber key;
+    public int id;
     public string name;
     public ItemType type;
     public string rarity;
@@ -56,12 +57,15 @@ public class BaseItem
     public string tooltip;
     public int price;
 
+    //추후 스킬 만들면 아마 이렇게 할듯?
+    //public List<string> skills = new List<string>();
+
     public virtual BaseItem Clone()
     {
         return new BaseItem
         {
             image = this.image,
-            key = this.key,
+            id = this.id,
             name = this.name,
             type = this.type,
             rarity = this.rarity,
@@ -70,35 +74,39 @@ public class BaseItem
             allCount = this.allCount,
             color = this.color,
             tooltip = this.tooltip,
-            price = this.price
+            price = this.price,
+            //skills = new List<string>(this.skills) //깊은 복사
         };
     }
 
     //EquipSlot? (nullable)로 하면 장비가 아닌 아이템은 null로 처리 가능
-    public virtual EquipSlot? GetEquipSlot()
-    {
-        return null; // 기본은 장착 불가
-    }
+    //보통 아이템은 장착불가
+    public virtual EquipSlot? GetEquipSlot() => null;
+    
 
 }
 
 public class Weapon : BaseItem
 {
     public int damage;
+    public EquipSlot equipType;
     public Attribute attribute;
     public override EquipSlot? GetEquipSlot()
     {
         return EquipSlot.Weapon;
     }
 
+    
+
     public override BaseItem Clone()
     {
         return new Weapon
         {
             image = this.image,
-            key = this.key,
+            id = this.id,
             name = this.name,
             type = this.type,
+            equipType = this.equipType,
             rarity = this.rarity,
             count = this.count,
             maxCount = this.maxCount,
@@ -132,7 +140,7 @@ public class Armor : BaseItem
         return new Armor
         {
             image = this.image,
-            key = this.key,
+            id = this.id,
             name = this.name,
             type = this.type,
             equipType = this.equipType,
@@ -167,7 +175,7 @@ public class Potion : BaseItem
         return new Potion
         {
             image = this.image,
-            key = this.key,
+            id = this.id,
             name = this.name,
             type = this.type,
             rarity = this.rarity,
@@ -198,7 +206,7 @@ public class Trap : BaseItem
         {
             trap = this.trap,
             image = this.image,
-            key = this.key,
+            id = this.id,
             name = this.name,
             type = this.type,
             rarity = this.rarity,

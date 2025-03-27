@@ -2,138 +2,139 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
 public class EquipItemToolTipCtrl : MonoBehaviour
 {
+    public enum TooltipPage { Page1, Page2 }
+    private TooltipPage currentPage;
 
-    //참조해올 오브젝트들
-    [Header("공통 세팅")]
-    [SerializeField]
-    Image image;
-    [SerializeField]
-    Text itemName;
-    [SerializeField]
-    Text toolTip;
-    [SerializeField]
-    Text sellGold;
+    [Header("공통 UI")]
+    [SerializeField] private GameObject page1Obj;
+    [SerializeField] private GameObject page2Obj;
 
-    [Header("무기 세팅")]
-    [SerializeField]
-    GameObject weaponObj;
-    [SerializeField]
-    Text weaponRarity;
-    [SerializeField]
-    Text damage;
-    [SerializeField]
-    Text attribute;
-    
-    [Header("방어구 세팅")]
-    [SerializeField]
-    GameObject ArmorObj;
-    [SerializeField]
-    Text armorRarity;
-    [SerializeField]
-    Text level;
-    [SerializeField]
-    Text defense;
-    [SerializeField]
-    Text fireDef;
-    [SerializeField]
-    Text waterDef;
-    [SerializeField]
-    Text LightningDef;
-    [SerializeField]
-    Text IceDef;
-    [SerializeField]
-    Text DragonDef;
+    [SerializeField] private Image image;
+    [SerializeField] private Text itemName;
+    [SerializeField] private Text toolTip;
+    [SerializeField] private Text sellGold;
 
+    [Header("무기 전용 (1페이지)")]
+    [SerializeField] private GameObject weaponObj;
+    [SerializeField] private Text weaponRarity;
+    [SerializeField] private Text damage;
+    [SerializeField] private Text attribute;
+
+    [Header("방어구 전용 (1페이지)")]
+    [SerializeField] private GameObject armorObj;
+    [SerializeField] private Text armorRarity;
+    [SerializeField] private Text level;
+    [SerializeField] private Text defense;
+    [SerializeField] private Text fireDef;
+    [SerializeField] private Text waterDef;
+    [SerializeField] private Text lightningDef;
+    [SerializeField] private Text iceDef;
+    [SerializeField] private Text dragonDef;
+
+    [Header("2페이지 전용")]
+    [SerializeField] private Image page2Image;
+    [SerializeField] private Text page2Name;
+    [SerializeField] private Text page2Description;
+    [SerializeField] private Text[] skillTexts;
+
+    private BaseItem currentItem;
 
     private void Awake()
     {
-        //초기화 - 처음엔 아무것도 없으니까 비활성화
-        TooltipClear(false,ItemType.Empty);
+        HideTooltip();
     }
 
-    public void TooltipClear(bool set ,ItemType type)
+    public void ShowTooltip(BaseItem item)
     {
-        image.gameObject.SetActive(set);
-        itemName.gameObject.SetActive(set);
-        toolTip.gameObject.SetActive(set);
-        sellGold.gameObject.SetActive(set);
-
-        //무기
-        if(type == ItemType.Weapon)
-        {
-            weaponObj.SetActive(set);
-            damage.gameObject.SetActive(set);
-            weaponRarity.gameObject.SetActive(set);
-            attribute.gameObject.SetActive(set);
-        }        
-
-        //방어구
-        else if (type == ItemType.Armor)
-        {
-            ArmorObj.SetActive(set);
-            armorRarity.gameObject.SetActive(set);
-            level.gameObject.SetActive(set);
-            defense.gameObject.SetActive(set);
-            fireDef.gameObject.SetActive(set);
-            waterDef.gameObject.SetActive(set);
-            LightningDef.gameObject.SetActive(set);
-            IceDef.gameObject.SetActive(set);
-            DragonDef.gameObject.SetActive(set);
-        }
-        
+        currentItem = item;
+        ShowPage(TooltipPage.Page1);
     }
 
-    public void SetWeapon(Weapon item)
+    public void ShowPage(TooltipPage page)
     {
-        if (item == null)
+        if (currentItem == null || currentItem.type == ItemType.Empty)
         {
-            TooltipClear(false, ItemType.Weapon);
-            return;
-        }
-        image.sprite = item.image;
-        itemName.text = item.name;
-        toolTip.text = item.tooltip;
-        weaponRarity.text = item.rarity.ToString();
-        sellGold.text = item.price.ToString();
-
-        damage.text = item.damage.ToString();
-        attribute.text = item.attribute.ToString();
-
-
-
-        TooltipClear(true,ItemType.Weapon);
-    }
-
-    public void SetArmor(Armor item)
-    {
-        if (item == null)
-        {
-            TooltipClear(false,ItemType.Armor);
+            HideTooltip();
             return;
         }
 
+        page1Obj.SetActive(page == TooltipPage.Page1);
+        page2Obj.SetActive(page == TooltipPage.Page2);
+        currentPage = page;
+
+        if (page == TooltipPage.Page1) ShowPage1(currentItem);
+        else ShowPage2(currentItem);
+    }
+
+    private void ShowPage1(BaseItem item)
+    {
+        // 공통
         image.sprite = item.image;
         itemName.text = item.name;
-        armorRarity.text = item.rarity.ToString();
         toolTip.text = item.tooltip;
-        
-        defense.text = item.defense.ToString();
-        level.text = item.level.ToString();
-        fireDef.text = item.fireDef.ToString();
-        waterDef.text = item.waterDef.ToString();
-        LightningDef.text = item.LightningDef.ToString();
-        IceDef.text = item.IceDef.ToString();
-        DragonDef.text = item.DragonDef.ToString();
-
-
-
-
         sellGold.text = item.price.ToString();
 
-        TooltipClear(true, ItemType.Armor);
+        if (item is Weapon weapon)
+        {
+            armorObj.SetActive(false);
+            weaponObj.SetActive(true);
+
+            weaponRarity.text = weapon.rarity;
+            damage.text = weapon.damage.ToString();
+            attribute.text = weapon.attribute.ToString();
+        }
+        else if (item is Armor armor)
+        {
+            weaponObj.SetActive(false);
+            armorObj.SetActive(true);
+
+            armorRarity.text = armor.rarity;
+            level.text = armor.level.ToString();
+            defense.text = armor.defense.ToString();
+            fireDef.text = armor.fireDef.ToString();
+            waterDef.text = armor.waterDef.ToString();
+            lightningDef.text = armor.LightningDef.ToString();
+            iceDef.text = armor.IceDef.ToString();
+            dragonDef.text = armor.DragonDef.ToString();
+        }
+    }
+private void ShowPage2(BaseItem item)
+{
+    page2Image.sprite = item.image;
+    page2Name.text = item.name;
+    page2Description.text = item.tooltip;
+
+    //for (int i = 0; i < skillTexts.Length; i++)
+    //{
+    //    if (item.skills != null && i < item.skills.Count)
+    //    {
+    //        skillTexts[i].text = item.skills[i];
+    //    }
+    //    else
+    //    {
+    //        skillTexts[i].text = "";
+    //    }
+    //}
+}
+
+    public void TogglePage()
+    {
+        if (currentPage == TooltipPage.Page1)
+            ShowPage(TooltipPage.Page2);
+        else
+            ShowPage(TooltipPage.Page1);
+    }
+
+    public void HideTooltip()
+    {
+        page1Obj.SetActive(false);
+        page2Obj.SetActive(false);
+    }
+
+    public void Clear()
+    {
 
     }
 }
