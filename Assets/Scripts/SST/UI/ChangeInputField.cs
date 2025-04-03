@@ -21,7 +21,8 @@ public class ChangeInputField : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            Selectable next = system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnDown();
+            Selectable next = system.currentSelectedGameObject.GetComponent<Selectable>()
+                .FindSelectableOnDown();
 
             if (next != null)
             {
