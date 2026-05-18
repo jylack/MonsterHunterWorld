@@ -388,21 +388,33 @@ UI를 닫는 동작에서 Firebase 저장까지 함께 처리하면 구조가 �
 
 최종 PDF 또는 PPT 제작 시 다음 이미지를 추가하면 좋습니다.
 
-1. [이미지요청: 게임 대표 플레이 화면] <img width="1911" height="1072" alt="image" src="https://github.com/user-attachments/assets/81ac5779-37da-4afa-b2ce-3fa385ff26c8" />
+1. [게임 대표 플레이 화면] <img width="1911" height="1072" alt="image" src="https://github.com/user-attachments/assets/81ac5779-37da-4afa-b2ce-3fa385ff26c8" />
 
-2. [이미지요청: CSV 아이템 데이터 표] Assets/Resources/Data/item_data.CSV 파일 <img width="1164" height="711" alt="image" src="https://github.com/user-attachments/assets/e82872cb-12bd-4634-8380-61eefda69052" />
 
-3. [이미지요청: 인벤토리 UI 전체 화면] 퀵슬롯 인벤에 아무것도 안넎은 기본 인벤토리 상태 <img width="792" height="258" alt="image" src="https://github.com/user-attachments/assets/7dfbef0a-ffac-4b51-8ef7-cc42577b1585" />
+2. [CSV 아이템 데이터 표] Assets/Resources/Data/item_data.CSV 파일 <img width="1164" height="711" alt="image" src="https://github.com/user-attachments/assets/e82872cb-12bd-4634-8380-61eefda69052" />
+
+
+3. [인벤토리 UI 전체 화면] 퀵슬롯 인벤에 아무것도 안넎은 기본 인벤토리 상태 <img width="792" height="258" alt="image" src="https://github.com/user-attachments/assets/7dfbef0a-ffac-4b51-8ef7-cc42577b1585" />
+
    3-1.퀵슬롯 인벤에 아이템을 넣은상태 <img width="731" height="203" alt="image" src="https://github.com/user-attachments/assets/cc1c48c8-dd0e-4ddc-94d6-b1fbb2a2ea97" />
+   
    3-2.장비장착 목록 및 장비 box <img width="1884" height="970" alt="image" src="https://github.com/user-attachments/assets/e27adae6-2a55-445a-9161-0158fed271de" />
    
-4. [이미지요청: Firebase에 저장된 계정 데이터 화면] <img width="834" height="142" alt="image" src="https://github.com/user-attachments/assets/0b3d54bd-6f1f-4e75-b00b-4a9c37f9a6e2" />
-    4-1. [이미지요청: Firebase에 저장된 인벤토리 데이터 화면] <img width="761" height="457" alt="image" src="https://github.com/user-attachments/assets/fd91cb38-51aa-4da0-8d87-ba09813d3241" />
+   
+4. [Firebase에 저장된 계정 데이터 화면] <img width="834" height="142" alt="image" src="https://github.com/user-attachments/assets/0b3d54bd-6f1f-4e75-b00b-4a9c37f9a6e2" />  
+    4-1. [Firebase에 저장된 인벤토리 데이터 화면] <img width="761" height="457" alt="image" src="https://github.com/user-attachments/assets/fd91cb38-51aa-4da0-8d87-ba09813d3241" />  
 5. [퀵슬롯 아이템 사용 전/후 비교]
-   5-1.퀵슬롯 기본상태 <img width="872" height="536" alt="image" src="https://github.com/user-attachments/assets/d1fb0c40-3767-436f-a740-cdc2d13e7707" />
-   5-2.퀵슬록 확장상태 <img width="262" height="160" alt="image" src="https://github.com/user-attachments/assets/36322d66-3021-410e-aaf6-04f8df5103f1" />
-   5-3.퀵슬롯 아이템 사용 상태 <img width="822" height="530" alt="image" src="https://github.com/user-attachments/assets/f9ba64f1-908d-46b0-9333-1096844fa816" />
-7. [이미지요청: 장비 장착 전/후 캐릭터 또는 장비 UI 비교]
+   5-1.퀵슬롯 기본상태 <img width="872" height="536" alt="image" src="https://github.com/user-attachments/assets/d1fb0c40-3767-436f-a740-cdc2d13e7707" />  
+   5-2.퀵슬록 확장상태 <img width="262" height="160" alt="image" src="https://github.com/user-attachments/assets/36322d66-3021-410e-aaf6-04f8df5103f1" />  
+   5-3.퀵슬롯 아이템 사용 상태 <img width="822" height="530" alt="image" src="https://github.com/user-attachments/assets/f9ba64f1-908d-46b0-9333-1096844fa816" />  
+6. [ 장비 장착 전/후 캐릭터 또는 장비 UI 비교]
+   6-1.기본장비 장착상태의 캐릭터상태 <img width="373" height="408" alt="image" src="https://github.com/user-attachments/assets/40c8cec0-4cea-43e0-b4a4-f476e6306a1c" />  
+   
+   6-2.기본장비 장착된 상태서 치트써서 모든 장비 장비인벤에 넣은 후 <img width="541" height="495" alt="image" src="https://github.com/user-attachments/assets/ea912237-5c0b-4faa-ac49-be59e5186891" />
+   
+   6-3.부분적으로 파츠 변경 후 캐릭터 상태<img width="373" height="387" alt="image" src="https://github.com/user-attachments/assets/48309018-178a-4d7d-9891-f8632a1709be" />
+   
+
 
 ---
 
